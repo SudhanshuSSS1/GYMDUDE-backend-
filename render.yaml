@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: gymdude-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: gymdude-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: gymdude-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: gymdude-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gymdude-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: gymdude-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_USER
+        value: sudhanshusmtp@gmail.com
+      - key: SMTP_PASS
+        value: "ftqo sasp utcr jhyf"
+
+databases:
+  - name: gymdude-db
+    plan: free
