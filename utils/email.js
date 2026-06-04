@@ -13,6 +13,7 @@ const transporter = nodemailer.createTransport({
 
 const sendVerificationEmail = async (email, token) => {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  console.log(`[Email] Base URL evaluated as: ${baseUrl}`);
   const verificationUrl = `${baseUrl}/api/auth/verify-email/${token}`;
   
   const mailOptions = {
@@ -26,11 +27,18 @@ const sendVerificationEmail = async (email, token) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email] Verification email sent successfully to ${email}`);
+  } catch (error) {
+    console.error(`[Email] Failed to send verification email to ${email}:`, error);
+    throw error;
+  }
 };
 
 const sendPasswordResetEmail = async (email, token) => {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  console.log(`[Email] Base URL evaluated as: ${baseUrl}`);
   const resetUrl = `${baseUrl}/api/auth/reset-password/${token}`;
   
   const mailOptions = {
@@ -45,7 +53,13 @@ const sendPasswordResetEmail = async (email, token) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email] Password reset email sent successfully to ${email}`);
+  } catch (error) {
+    console.error(`[Email] Failed to send password reset email to ${email}:`, error);
+    throw error;
+  }
 };
 
 module.exports = {
