@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  family: 4, // Force IPv4 to avoid ENETUNREACH errors on Render with IPv6
 });
 
 const sendVerificationEmail = async (email, token) => {
