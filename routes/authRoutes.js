@@ -26,4 +26,12 @@ router.post('/reset-password/:token', authController.resetPassword);
 // @desc    Resend verification email
 router.post('/resend-verification', authController.resendVerification);
 
+// @route   POST /api/auth/update-profile
+// @desc    Update user profile
+router.post('/update-profile', authController.updateProfile);
+
+// @route   POST /api/auth/update-goals
+// @desc    Update user goals
+router.post('/update-goals', authController.updateGoals);
+
 module.exports = router;

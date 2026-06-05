@@ -35,6 +35,46 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  fullName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  weight: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  height: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  activityLevel: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  targetCalories: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  targetProtein: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  waterGoal: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  isProfileComplete: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   timestamps: true,
 });

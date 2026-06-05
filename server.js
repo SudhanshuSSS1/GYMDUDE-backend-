@@ -4,7 +4,12 @@ require('dotenv').config();
 
 const sequelize = require('./config/database');
 const User = require('./models/User'); // Required to load the model
+const FoodLog = require('./models/FoodLog');
+const WorkoutLog = require('./models/WorkoutLog');
 const authRoutes = require('./routes/authRoutes');
+const nutritionRoutes = require('./routes/nutritionRoutes');
+const workoutRoutes = require('./routes/workoutRoutes');
+const progressRoutes = require('./routes/progressRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,10 +20,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api', nutritionRoutes);
+app.use('/api', workoutRoutes);
+app.use('/api', progressRoutes);
 
 // Database connection and synchronization
 sequelize
-  .sync() // Use .sync({ force: true }) if you want to drop tables and recreate them
+  .sync({ alter: true }) // Update tables without dropping data
   .then(() => {
     console.log('Database connected and models synchronized.');
     
