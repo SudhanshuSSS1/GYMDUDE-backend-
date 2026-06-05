@@ -1,11 +1,15 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const resendApiKey = process.env.RESEND_API_KEY || 're_123';
-if (!process.env.RESEND_API_KEY) {
-  console.warn('[Email] Warning: RESEND_API_KEY is not set in environment variables. Using a dummy key. Email sending will fail.');
-}
-const resend = new Resend(resendApiKey);
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: process.env.SMTP_PORT || 465,
+  secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 const sendVerificationEmail = async (email, token) => {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
@@ -13,9 +17,8 @@ const sendVerificationEmail = async (email, token) => {
   const verificationUrl = `${baseUrl}/api/auth/verify-email/${token}`;
   
   try {
-    const { data, error } = await resend.emails.send({
-      // If you don't have a verified domain on Resend, you must use onboarding@resend.dev as the 'from' address
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || process.env.SMTP_USER,
       to: email,
       subject: 'Email Verification',
       html: `
@@ -25,12 +28,7 @@ const sendVerificationEmail = async (email, token) => {
       `,
     });
 
-    if (error) {
-      console.error(`[Email] Resend API Error for ${email}:`, error);
-      throw error;
-    }
-
-    console.log(`[Email] Verification email sent successfully to ${email}. ID: ${data.id}`);
+    console.log(`[Email] Verification email sent successfully to ${email}. ID: ${info.messageId}`);
   } catch (error) {
     console.error(`[Email] Failed to send verification email to ${email}:`, error);
     throw error;
@@ -43,8 +41,8 @@ const sendPasswordResetEmail = async (email, token) => {
   const resetUrl = `${baseUrl}/api/auth/reset-password/${token}`;
   
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || process.env.SMTP_USER,
       to: email,
       subject: 'Password Reset',
       html: `
@@ -55,12 +53,7 @@ const sendPasswordResetEmail = async (email, token) => {
       `,
     });
 
-    if (error) {
-      console.error(`[Email] Resend API Error for ${email}:`, error);
-      throw error;
-    }
-
-    console.log(`[Email] Password reset email sent successfully to ${email}. ID: ${data.id}`);
+    console.log(`[Email] Password reset email sent successfully to ${email}. ID: ${info.messageId}`);
   } catch (error) {
     console.error(`[Email] Failed to send password reset email to ${email}:`, error);
     throw error;
