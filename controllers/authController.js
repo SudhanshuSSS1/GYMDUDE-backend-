@@ -159,3 +159,33 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+// Resend Verification Email
+exports.resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'User is already verified' });
+    }
+
+    // Generate a new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    // Send verification email
+    await sendVerificationEmail(user.email, verificationToken);
+
+    res.status(200).json({ message: 'Verification email resent successfully.' });
+  } catch (error) {
+    console.error('Resend Verification Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
